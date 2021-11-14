@@ -3,7 +3,7 @@ import telebot
 from main import bot 
 
 
-def handler(event, _):
+def handler(event, _context):
     body = json.loads(event['body'])
     message = telebot.types.Update.de_json(body)
     bot.process_new_updates([message])
