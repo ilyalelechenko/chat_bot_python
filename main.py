@@ -228,7 +228,7 @@ def getData(user, title):
 
             }
         )
-    elif user.type == 'Студент':
+    if user.type == 'Студент':
         t = Template('$title \nФИО: *$fullname* \nКем является: *$type* \n'
                      'Группа: *$subunit* \nДата рождения: *$birthday* \nНомер студенческого: *$pers_inform*'
                      '\nКонтактные данные: *$contacts*')
