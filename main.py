@@ -4,6 +4,7 @@ from string import Template
 import datetime
 import validate as val
 
+
 bot = telebot.TeleBot(os.environ.get('BOT_TOKEN'))
 chat_id = os.environ.get('CHAT_ID')
 now_dt = datetime.datetime.now() + datetime.timedelta(hours=7, minutes=0)
@@ -24,6 +25,7 @@ class User:
 
 # Обработчик команды старт
 @bot.message_handler(commands=['start'])
+# Функция обработки старт
 def first_start(message):
     user_id = message.from_user.id
     user_dict[user_id] = User(message.from_user.id)
@@ -34,7 +36,7 @@ def first_start(message):
                      reply_markup=markup)
     bot.register_next_step_handler(message, start)
 
-
+# Выбор функции восстановление пароля. Начала цепи последовательных ответов
 def start(message):
     markup1 = telebot.types.ReplyKeyboardRemove(selective=False)
     if message.text in ('Восстановить пароль', 'Запустить бота', 'Изменить данные'):
@@ -53,6 +55,7 @@ def start(message):
 
 # Обработка кнопок ответа(инлайн кейборд)
 @bot.callback_query_handler(func=lambda call: call.data in ['sotr', 'student', 'abitur'])
+# Записываем ID пользователя, обрабатываем инлайн клавиатуру
 def query_handler(message):
     bot.delete_message(message.message.chat.id, message.message.message_id)
     user_id = message.from_user.id
@@ -106,6 +109,7 @@ def student(message):
         bot.register_next_step_handler(message, birthday)
 
 
+# Заполняем поле подразделение, просим заполнить дату рождения
 def birthday(message):
     user_id = message.from_user.id
     user = user_dict[user_id]
@@ -115,6 +119,7 @@ def birthday(message):
     bot.register_next_step_handler(message, check_birthday)
 
 
+# Проверяем день рождения на подходяший формат 
 def check_birthday(message):
     if val.numbers(message.text):
         user_id = message.from_user.id
@@ -128,6 +133,7 @@ def check_birthday(message):
         bot.register_next_step_handler(message, check_birthday)
 
 
+# Просим ввести персональные данные для каждого типа сотрудника разные
 def personal_inform(message):
     user_id = message.from_user.id
     user = user_dict[user_id]
@@ -138,6 +144,7 @@ def personal_inform(message):
     bot.register_next_step_handler(message, contacts)
 
 
+#Заполняем перс. информацию, просим ввести контактный номер телефона
 def contacts(message):
     user_id = message.from_user.id
     user = user_dict[user_id]
@@ -151,6 +158,7 @@ def contacts(message):
         personal_inform(message)
 
 
+# Заполняем контактные данные, проверка номера телефона на валидность
 def phone(message):
     user_id = message.from_user.id
     user = user_dict[user_id]
@@ -204,6 +212,7 @@ def end(message):
         bot.register_next_step_handler(message, wronganswer)
 
 
+# Проверяем выбор пользователя и перенаправляем на выбранную функцию
 def wronganswer(message):
     if message.text == "Изменить данные":
         start(message)
