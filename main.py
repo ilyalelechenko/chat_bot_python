@@ -53,7 +53,7 @@ def start(message):
 
 # Обработка кнопок ответа(инлайн кейборд)
 @bot.callback_query_handler(func=lambda call: call.data in ['sotr', 'student', 'abitur'])
-def query_handler2(message):
+def query_handler(message):
     bot.delete_message(message.message.chat.id, message.message.message_id)
     user_id = message.from_user.id
     user = user_dict[user_id]
@@ -210,6 +210,7 @@ def wronganswer(message):
     elif message.text == 'В главное меню':
         first_start(message)
 
+
 # Делаем красивый вывод заявки
 def getData(user, title):
     if user.type == 'Сотрудник':
@@ -254,4 +255,3 @@ def text(message):
     markup.add(btn1)
     bot.send_message(message.chat.id, 'Нажмите на кнопку, что бы начать', reply_markup=markup)
     bot.register_next_step_handler(message, first_start)
- 
