@@ -36,6 +36,7 @@ def first_start(message):
                      reply_markup=markup)
     bot.register_next_step_handler(message, start)
 
+
 # Выбор функции восстановление пароля. Начала цепи последовательных ответов
 def start(message):
     markup1 = telebot.types.ReplyKeyboardRemove(selective=False)
@@ -43,9 +44,9 @@ def start(message):
         bot.send_message(message.chat.id, 'Для восстановления пароля',
                          reply_markup=markup1)
         markup = telebot.types.InlineKeyboardMarkup()
-        markup.add(telebot.types.InlineKeyboardButton('Я сотрудник', callback_data='sotr'))
+        markup.add(telebot.types.InlineKeyboardButton('Я сотрудник', callback_data='employee'))
         markup.add(telebot.types.InlineKeyboardButton('Я студент', callback_data='student'))
-        markup.add(telebot.types.InlineKeyboardButton('Я абитуриент', callback_data='abitur'))
+        markup.add(telebot.types.InlineKeyboardButton('Я абитуриент', callback_data='Entrant'))
         bot.send_message(message.chat.id, 'Выберите из спика:', reply_markup=markup)
     else:
         bot.send_message(message.chat.id, 'Извините, мой функционал еще маленький, попробуйте начать сначала /start',
@@ -54,14 +55,14 @@ def start(message):
 
 
 # Обработка кнопок ответа(инлайн кейборд)
-@bot.callback_query_handler(func=lambda call: call.data in ['sotr', 'student', 'abitur'])
+@bot.callback_query_handler(func=lambda call: call.data in ['employee', 'student', 'Entrant'])
 # Записываем ID пользователя, обрабатываем инлайн клавиатуру
 def query_handler(message):
     bot.delete_message(message.message.chat.id, message.message.message_id)
     user_id = message.from_user.id
     user = user_dict[user_id]
     text_mes = 'Введите ваше ФИО:'
-    if message.data == 'sotr':
+    if message.data == 'employee':
         user.type = 'Сотрудник'
         bot.send_message(message.message.chat.id, text_mes)
         bot.register_next_step_handler(message.message, subunit)
@@ -69,10 +70,10 @@ def query_handler(message):
         user.type = 'Студент'
         bot.send_message(message.message.chat.id, text_mes)
         bot.register_next_step_handler(message.message, student)
-    elif message.data == 'abitur':
+    elif message.data == 'Entrant':
         user.type = 'Абитуриент'
         bot.send_message(message.message.chat.id, 'test')
-        # bot.register_next_step_handler(message.message, matriculant)
+        # bot.register_next_step_handler(message.message, Entrant)
     bot.edit_message_reply_markup(message.message.chat.id, message.message.message_id)
 
 
@@ -91,7 +92,7 @@ def subunit(message):
 
 
 # Обработка ответ абитуриент
-# def matriculant(message):
+# def Entrant(message):
 #   bot.send_message(message.chat.id, 'Тест')
 
 
@@ -144,7 +145,7 @@ def personal_inform(message):
     bot.register_next_step_handler(message, contacts)
 
 
-#Заполняем перс. информацию, просим ввести контактный номер телефона
+# Заполняем перс. информацию, просим ввести контактный номер телефона
 def contacts(message):
     user_id = message.from_user.id
     user = user_dict[user_id]
@@ -209,11 +210,11 @@ def end(message):
         bnt2 = telebot.types.KeyboardButton('В главное меню')
         markup.add(btn1, bnt2)
         bot.send_message(message.chat.id, 'Что вы хотите сделать?', reply_markup=markup)
-        bot.register_next_step_handler(message, wronganswer)
+        bot.register_next_step_handler(message, wrong_answer)
 
 
 # Проверяем выбор пользователя и перенаправляем на выбранную функцию
-def wronganswer(message):
+def wrong_answer(message):
     if message.text == "Изменить данные":
         start(message)
     elif message.text == 'В главное меню':
