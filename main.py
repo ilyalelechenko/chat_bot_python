@@ -37,14 +37,14 @@ def first_start(message):
 
 def start(message):
     markup1 = telebot.types.ReplyKeyboardRemove(selective=False)
-    if message.text == 'Восстановить пароль' or message.text == 'Запустить бота' or message.text == 'Изменить данные':
-        bot.send_message(message.chat.id, f'Для восстановления пароля',
+    if message.text in ('Восстановить пароль', 'Запустить бота', 'Изменить данные'):
+        bot.send_message(message.chat.id, 'Для восстановления пароля',
                          reply_markup=markup1)
         markup = telebot.types.InlineKeyboardMarkup()
         markup.add(telebot.types.InlineKeyboardButton('Я сотрудник', callback_data='sotr'))
         markup.add(telebot.types.InlineKeyboardButton('Я студент', callback_data='student'))
         markup.add(telebot.types.InlineKeyboardButton('Я абитуриент', callback_data='abitur'))
-        bot.send_message(message.chat.id, f'Выберите из спика:', reply_markup=markup)
+        bot.send_message(message.chat.id, 'Выберите из спика:', reply_markup=markup)
     else:
         bot.send_message(message.chat.id, 'Извините, мой функционал еще маленький, попробуйте начать сначала /start',
                          reply_markup=markup1)
@@ -57,7 +57,7 @@ def query_handler2(message):
     bot.delete_message(message.message.chat.id, message.message.message_id)
     user_id = message.from_user.id
     user = user_dict[user_id]
-    text_mes = f'Введите ваше ФИО:'
+    text_mes = 'Введите ваше ФИО:'
     if message.data == 'sotr':
         user.type = 'Сотрудник'
         bot.send_message(message.message.chat.id, text_mes)
@@ -75,15 +75,15 @@ def query_handler2(message):
 
 # Обработка ответа сотрудник
 def subunit(message):
-    if val.only_letters(message.text) is not True:
-        bot.send_message(message.chat.id, f'Вы ввели некорректные данные')
+    if val.only_letters(message.text):
+        bot.send_message(message.chat.id, 'Вы ввели некорректные данные')
         bot.send_message(message.chat.id, 'Введите ваше ФИО')
         bot.register_next_step_handler(message, subunit)
     else:
         user_id = message.from_user.id
         user = user_dict[user_id]
         user.fullname = message.text
-        bot.send_message(message.chat.id, f'Введите ваше подразделение')
+        bot.send_message(message.chat.id, 'Введите ваше подразделение')
         bot.register_next_step_handler(message, birthday)
 
 
@@ -94,15 +94,15 @@ def subunit(message):
 
 # Обработка ответ студент
 def student(message):
-    if val.only_letters(message.text) is not True:
-        bot.send_message(message.chat.id, f'Вы ввели некорректные данные')
+    if val.only_letters(message.text):
+        bot.send_message(message.chat.id, 'Вы ввели некорректные данные')
         bot.send_message(message.chat.id, 'Введите ваше ФИО')
         bot.register_next_step_handler(message, student)
     else:
         user_id = message.from_user.id
         user = user_dict[user_id]
         user.fullname = message.text
-        bot.send_message(message.chat.id, f'Введите вашу группу')
+        bot.send_message(message.chat.id, 'Введите вашу группу')
         bot.register_next_step_handler(message, birthday)
 
 
@@ -122,7 +122,7 @@ def check_birthday(message):
         user.birthday = message.text
         personal_inform(message)
     else:
-        bot.send_message(message.chat.id, f'Вы ввели некорректные данные')
+        bot.send_message(message.chat.id, 'Вы ввели некорректные данные')
         bot.send_message(message.chat.id, 'Введите вашу дату рождения '
                                           '\nВ формате 00.00.0000')
         bot.register_next_step_handler(message, check_birthday)
@@ -132,9 +132,9 @@ def personal_inform(message):
     user_id = message.from_user.id
     user = user_dict[user_id]
     if user.type == 'Сотрудник':
-        bot.send_message(message.chat.id, f'Введите последние 4 цифры номера вашего паспорта')
+        bot.send_message(message.chat.id, 'Введите последние 4 цифры номера вашего паспорта')
     elif user.type == 'Студент':
-        bot.send_message(message.chat.id, f'Введите номер вашего студенческого')
+        bot.send_message(message.chat.id, 'Введите номер вашего студенческого')
     bot.register_next_step_handler(message, contacts)
 
 
@@ -146,8 +146,8 @@ def contacts(message):
         message.text = int(message.text)
         bot.send_message(message.chat.id, 'Введите ваш контактный номер телефона')
         bot.register_next_step_handler(message, phone)
-    except:
-        bot.send_message(message.chat.id, f'Вы ввели некорректные данные')
+    except ValueError:
+        bot.send_message(message.chat.id, 'Вы ввели некорректные данные')
         personal_inform(message)
 
 
@@ -159,7 +159,7 @@ def phone(message):
         bot.send_message(message.chat.id, 'Введите вашу контактную почту')
         bot.register_next_step_handler(message, check)
     else:
-        bot.send_message(message.chat.id, f'Вы ввели некорректные данные')
+        bot.send_message(message.chat.id, 'Вы ввели некорректные данные')
         bot.send_message(message.chat.id, 'Введите ваш контактный номер телефона')
         bot.register_next_step_handler(message, phone)
 
@@ -173,7 +173,7 @@ def check(message):
     btn1 = telebot.types.KeyboardButton('Всё верно')
     bnt2 = telebot.types.KeyboardButton('Начать сначала')
     markup.add(btn1, bnt2)
-    bot.send_message(message.chat.id, f'Проверьте ваши данные\nВсё верно?', reply_markup=markup)
+    bot.send_message(message.chat.id, 'Проверьте ваши данные\nВсё верно?', reply_markup=markup)
     bot.send_message(message.chat.id, getData(user, f'Заявка от {now_dt.strftime("%d-%m-%Y %H:%M")}'),
                      parse_mode="Markdown")
     bot.register_next_step_handler(message, end)
@@ -200,7 +200,7 @@ def end(message):
         btn1 = telebot.types.KeyboardButton('Изменить данные')
         bnt2 = telebot.types.KeyboardButton('В главное меню')
         markup.add(btn1, bnt2)
-        bot.send_message(message.chat.id, f'Что вы хотите сделать?', reply_markup=markup)
+        bot.send_message(message.chat.id, 'Что вы хотите сделать?', reply_markup=markup)
         bot.register_next_step_handler(message, wronganswer)
 
 
@@ -252,5 +252,6 @@ def text(message):
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
     btn1 = telebot.types.KeyboardButton('Запустить бота')
     markup.add(btn1)
-    bot.send_message(message.chat.id, f'Нажмите на кнопку, что бы начать', reply_markup=markup)
+    bot.send_message(message.chat.id, 'Нажмите на кнопку, что бы начать', reply_markup=markup)
     bot.register_next_step_handler(message, first_start)
+ 

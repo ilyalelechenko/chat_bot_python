@@ -4,17 +4,12 @@ import datetime
 
 # Проверка ФИО (доработать с регулярками)
 def only_letters(message):
-    if re.search('[0-9,!@#$%^&*()+=]', message):
-        return False
-    else:
-        return True
+    return bool(re.search("[0-9,!@#$%^&*()+=]", message))
 
 
+# Проверка номера телефона
 def only_numbers(message):
-    if re.match('^[0-9+()-]*$', message) is not None:
-        return True
-    else:
-        return False
+    return bool(re.match('^[0-9+()-]*$', message) is not None)
 
 
 # Проверка даты рождения
@@ -22,5 +17,5 @@ def numbers(message):
     try:
         datetime.datetime.strptime(message, "%d.%m.%Y")
         return True
-    except:
+    except ValueError:
         return False
